@@ -1,4 +1,4 @@
-package com.hidayatasep.expandablemenuandroid;
+package com.rollingglory.expandablemenuandroid;
 
 import org.junit.Test;
 

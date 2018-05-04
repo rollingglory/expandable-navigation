@@ -1,4 +1,4 @@
-package com.hidayatasep.expandablemenuandroid;
+package com.rollingglory.expandablemenuandroid;
 
 /**
  * Created by hidayatasep43 on 9/14/2017.

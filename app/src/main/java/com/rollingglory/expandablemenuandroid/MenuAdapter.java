@@ -1,4 +1,4 @@
-package com.hidayatasep.expandablemenuandroid;
+package com.rollingglory.expandablemenuandroid;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
