@@ -1,6 +1,7 @@
 package com.rollingglory.expandablemenuandroid;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by hidayatasep43 on 1/4/2018.
@@ -26,13 +24,13 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private HashMap<MenuModel, List<MenuModel>> mListDataChild;
     private List<MenuModel> mMenuModelList;
     private List<MenuModel> mMenuParentList;
-    OnMenuListener mListener;
+    private OnMenuListener mListener;
 
-    public static interface OnMenuListener{
-        public void onMenuClick(String menu);
+    public interface OnMenuListener{
+        void onMenuClick(String menu);
     }
 
-    public MenuAdapter(Context context, List<MenuModel> listDataHeader, HashMap<MenuModel, List<MenuModel>> listDataChild) {
+    MenuAdapter(Context context, List<MenuModel> listDataHeader, HashMap<MenuModel, List<MenuModel>> listDataChild) {
         mContext = context;
         mListDataChild = listDataChild;
         mMenuModelList = new ArrayList<>();
@@ -41,12 +39,12 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         mMenuParentList.addAll(listDataHeader);
     }
 
-    public void setMenuModelList(List<MenuModel> menuModelList) {
+    void setMenuModelList(List<MenuModel> menuModelList) {
         mMenuModelList = menuModelList;
         mMenuParentList = menuModelList;
     }
 
-    public void setListDataChild(HashMap<MenuModel, List<MenuModel>> listDataChild) {
+    void setListDataChild(HashMap<MenuModel, List<MenuModel>> listDataChild) {
         mListDataChild = listDataChild;
     }
 
@@ -55,8 +53,9 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         return mMenuModelList.get(position).tipeMenu;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType == MenuModel.TIPE_1){
             View viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_1, parent, false);
             return new ViewHolder1(viewItem);
@@ -79,7 +78,7 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int type = holder.getItemViewType();
         MenuModel menuModel = mMenuModelList.get(position);
         if(type == MenuModel.TIPE_1 || type == MenuModel.TIPE_2){
@@ -163,12 +162,13 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     class ViewHolder1 extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        @BindView(R.id.image_menu) ImageView mImageViewMenu;
-        @BindView(R.id.tv_menu) TextView mTextViewMenu;
+        ImageView mImageViewMenu;
+        TextView mTextViewMenu;
 
-        public ViewHolder1(View itemView) {
+        ViewHolder1(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mImageViewMenu = itemView.findViewById(R.id.image_menu);
+            mTextViewMenu = itemView.findViewById(R.id.tv_menu);
             itemView.setOnClickListener(this);
         }
 
@@ -184,11 +184,11 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     class ViewHolder2 extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        @BindView(R.id.tv_menu) TextView mTextViewMenu;
+        TextView mTextViewMenu;
 
-        public ViewHolder2(View itemView) {
+        ViewHolder2(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mTextViewMenu = itemView.findViewById(R.id.tv_menu);
             itemView.setOnClickListener(this);
         }
 
@@ -201,11 +201,11 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     class ViewHolder3 extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        @BindView(R.id.tv_menu) TextView mTextViewMenu;
+        TextView mTextViewMenu;
 
-        public ViewHolder3(View itemView) {
+        ViewHolder3(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mTextViewMenu = itemView.findViewById(R.id.tv_menu);
             itemView.setOnClickListener(this);
         }
 
@@ -218,11 +218,11 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     class ViewHolder4 extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        @BindView(R.id.tv_menu) TextView mTextViewMenu;
+        TextView mTextViewMenu;
 
-        public ViewHolder4(View itemView) {
+        ViewHolder4(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            mTextViewMenu = itemView.findViewById(R.id.tv_menu);
             itemView.setOnClickListener(this);
         }
 

@@ -12,21 +12,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements MenuAdapter.OnMenuListener {
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.nav_view) NavigationView navigationView;
-    @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
-    @BindView(R.id.navigation_menu) RecyclerView mRecyclerViewMenu;
+    private Toolbar toolbar;
+    private NavigationView navigationView;
+    private DrawerLayout drawerLayout;
+    private RecyclerView mRecyclerViewMenu;
 
     MenuAdapter mMenuAdapter;
     ActionBarDrawerToggle mActionBarDrawerToggle;
@@ -38,11 +35,16 @@ public class MainActivity extends AppCompatActivity implements MenuAdapter.OnMen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+
+        toolbar = findViewById(R.id.toolbar);
+        navigationView = findViewById(R.id.nav_view);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        mRecyclerViewMenu = findViewById(R.id.navigation_menu);
 
         //set up view
         setSupportActionBar(toolbar);
         initNavigationDrawer();
+        mMenuAdapter.setListener(this);
     }
 
     //init menu drawer
@@ -57,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements MenuAdapter.OnMen
         //set up slider menu
         setUpSliderMenu();
 
-        View header = navigationView.getHeaderView(0);
-
         mActionBarDrawerToggle =
                 new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                         R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements MenuAdapter.OnMen
     }
 
     private void setUpSliderMenu() {
-        listDataHeader = new ArrayList<MenuModel>();
-        listDataChild = new HashMap<MenuModel, List<MenuModel>>();
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
 
         listDataHeader.add(new MenuModel("Dashboard", R.mipmap.ic_launcher, 1));
 
