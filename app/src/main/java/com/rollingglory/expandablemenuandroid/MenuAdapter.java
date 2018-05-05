@@ -18,7 +18,11 @@ import java.util.List;
  * hidayatasep43@gmail.com
  */
 
-public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
+
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_GROUP_EXPANDED = 1;
+    private static final int TYPE_GROUP_COLLAPSED = 2;
 
     private Context mContext;
     private HashMap<MenuModel, List<MenuModel>> mListDataChild;
@@ -50,56 +54,49 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     @Override
     public int getItemViewType(int position) {
-        return mMenuModelList.get(position).tipeMenu;
+        MenuModel menuModel = mMenuModelList.get(position);
+        if (menuModel.type == MenuModel.TYPE_ITEM) {
+            return TYPE_ITEM;
+        } else {
+            if (menuModel.isExpand) {
+                return TYPE_GROUP_EXPANDED;
+            } else {
+                return TYPE_GROUP_COLLAPSED;
+            }
+        }
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(viewType == MenuModel.TIPE_1){
-            View viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_1, parent, false);
-            return new ViewHolder1(viewItem);
-        }else if(viewType == MenuModel.TIPE_2){
-            View viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_2, parent, false);
-            return new ViewHolder1(viewItem);
-        }else if(viewType == MenuModel.TIPE_3){
-            View viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_3, parent, false);
-            return new ViewHolder2(viewItem);
-        }else if(viewType == MenuModel.TIPE_4){
-            View viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_4, parent, false);
-            return new ViewHolder3(viewItem);
-        }else if(viewType == MenuModel.TIPE_5){
-            View viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_5, parent, false);
-            return new ViewHolder4(viewItem);
-        }else{
-            View viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_6, parent, false);
-            return new ViewHolder4(viewItem);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View viewItem;
+        if (viewType == TYPE_GROUP_EXPANDED) {
+            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_3, parent, false);
+        } else if (viewType == TYPE_GROUP_COLLAPSED) {
+            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_4, parent, false);
+        } else {
+            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_2, parent, false);
         }
+        return new ViewHolder(viewItem, viewType);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         int type = holder.getItemViewType();
         MenuModel menuModel = mMenuModelList.get(position);
-        if(type == MenuModel.TIPE_1 || type == MenuModel.TIPE_2){
-            ViewHolder1 viewHolder1 = (ViewHolder1) holder;
-            viewHolder1.mTextViewMenu.setText(menuModel.nameMenu);
-            if(menuModel.imageUri == null || menuModel.imageUri.isEmpty()){
-                viewHolder1.mImageViewMenu.setImageDrawable(mContext.getResources().getDrawable(menuModel.idDrawable));
+        if(type == TYPE_ITEM) {
+            holder.mTextViewMenu.setText(menuModel.name);
+            if(menuModel.iconUrl == null || menuModel.iconUrl.isEmpty()){
+                holder.mImageViewMenu.setImageDrawable(mContext.getResources().getDrawable(menuModel.icon));
             }else{
                 /*GlideApp.with(mContext)
-                        .load(menuModel.imageUri)
+                        .load(menuModel.mIconUrl)
                         .into(viewHolder1.mImageViewMenu);*/
             }
-        }else if(type == MenuModel.TIPE_4){
-            ViewHolder3 viewHolder3 = (ViewHolder3) holder;
-            viewHolder3.mTextViewMenu.setText(menuModel.nameMenu);
-        }else if(type == MenuModel.TIPE_3){
-            ViewHolder2 viewHolder2 = (ViewHolder2) holder;
-            viewHolder2.mTextViewMenu.setText(menuModel.nameMenu);
-        }else{
-            ViewHolder4 viewHolder4 = (ViewHolder4) holder;
-            viewHolder4.mTextViewMenu.setText(menuModel.nameMenu);
+        } else if(type == TYPE_GROUP_COLLAPSED) {
+            holder.mTextViewMenu.setText(menuModel.name);
+        } else if(type == TYPE_GROUP_EXPANDED) {
+            holder.mTextViewMenu.setText(menuModel.name);
         }
     }
 
@@ -122,7 +119,8 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 i += 1;
             }
         }
-        menuModel.tipeMenu = 3;
+        menuModel.type = TYPE_GROUP_EXPANDED;
+        menuModel.isExpand = true;
         notifyDataSetChanged();
     }
 
@@ -135,23 +133,14 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 mMenuModelList.remove(position + 1);
             }
         }
-        menuModel.tipeMenu = 4;
+        menuModel.type = TYPE_GROUP_COLLAPSED;
+        menuModel.isExpand = false;
         notifyDataSetChanged();
-    }
-
-    public boolean isMenuLogin(){
-        boolean result = false;
-        if(!mMenuModelList.isEmpty()){
-            if(mMenuModelList.get(0).nameMenu.equals("Dasbor")){
-                result = true;
-            }
-        }
-        return result;
     }
 
     public int getSizeChildMenu(String menu){
         for(MenuModel menuModel: mMenuParentList){
-            if(menuModel.nameMenu.equals(menu)){
+            if(menuModel.name.equals(menu)){
                 List<MenuModel> menuModels = mListDataChild.get(menuModel);
                 return menuModels.size();
             }
@@ -159,14 +148,17 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         return 0;
     }
 
-    class ViewHolder1 extends RecyclerView.ViewHolder
+    class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
         ImageView mImageViewMenu;
         TextView mTextViewMenu;
+        int viewType;
 
-        ViewHolder1(View itemView) {
+        ViewHolder(View itemView, int viewType) {
             super(itemView);
+
+            this.viewType = viewType;
             mImageViewMenu = itemView.findViewById(R.id.image_menu);
             mTextViewMenu = itemView.findViewById(R.id.tv_menu);
             itemView.setOnClickListener(this);
@@ -174,66 +166,17 @@ public class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         @Override
         public void onClick(View view) {
-            if(mListener != null){
-                String menu = mMenuModelList.get(getAdapterPosition()).nameMenu;
-                mListener.onMenuClick(menu);
+            if (viewType == TYPE_GROUP_COLLAPSED) {
+                expandList(getAdapterPosition());
+            } else if (viewType == TYPE_GROUP_EXPANDED) {
+                collapseList(getAdapterPosition());
+            } else {
+                if (mListener != null) {
+                    String menu = mMenuModelList.get(getAdapterPosition()).name;
+                    mListener.onMenuClick(menu);
+                }
             }
         }
     }
-
-    class ViewHolder2 extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
-
-        TextView mTextViewMenu;
-
-        ViewHolder2(View itemView) {
-            super(itemView);
-            mTextViewMenu = itemView.findViewById(R.id.tv_menu);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            collapseList(getAdapterPosition());
-        }
-    }
-
-    class ViewHolder3 extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
-
-        TextView mTextViewMenu;
-
-        ViewHolder3(View itemView) {
-            super(itemView);
-            mTextViewMenu = itemView.findViewById(R.id.tv_menu);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            expandList(getAdapterPosition());
-        }
-    }
-
-    class ViewHolder4 extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
-
-        TextView mTextViewMenu;
-
-        ViewHolder4(View itemView) {
-            super(itemView);
-            mTextViewMenu = itemView.findViewById(R.id.tv_menu);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if(mListener != null){
-                String menu = mMenuModelList.get(getAdapterPosition()).nameMenu;
-                mListener.onMenuClick(menu);
-            }
-        }
-    }
-
 
 }

@@ -6,45 +6,38 @@ package com.rollingglory.expandablemenuandroid;
 
 public class MenuModel {
 
-    public static final int TIPE_1 = 1;
-    public static final int TIPE_2 = 2;
-    public static final int TIPE_3 = 3;
-    public static final int TIPE_4 = 4;
-    public static final int TIPE_5 = 5;
-    public static final int TIPE_6 = 6;
+    public static final int TYPE_ITEM = 0;
+    public static final int TYPE_GROUP = 1;
 
-    public String nameMenu;
-    public String imageUri;
-    public int idDrawable;
-    public int tipeMenu;
-    public boolean isExpand= false;
+    public String name;
+    public String iconUrl;
+    public int icon;
+    public int type;
+    public boolean isExpand = false;
 
-    public MenuModel() {
+    public MenuModel() { }
+
+    public MenuModel(String name, int icon) {
+        this.name = name;
+        this.icon = icon;
     }
 
-    public MenuModel(String nameMenu, int idDrawable) {
-        this.nameMenu = nameMenu;
-        this.idDrawable = idDrawable;
+    public MenuModel(String name, int icon, int type) {
+        this.name = name;
+        this.icon = icon;
+        this.type = type;
     }
 
-    public MenuModel(String nameMenu, int idDrawable, int tipeMenu) {
-        this.nameMenu = nameMenu;
-        this.idDrawable = idDrawable;
-        this.tipeMenu = tipeMenu;
-        isExpand = false;
+    public MenuModel(String name, String iconUrl, int type) {
+        this.name = name;
+        this.iconUrl = iconUrl;
+        this.type = type;
     }
 
-    public MenuModel(String nameMenu, String imageUri, int tipeMenu) {
-        this.nameMenu = nameMenu;
-        this.imageUri = imageUri;
-        this.tipeMenu = tipeMenu;
-        isExpand = false;
-    }
-
-    public MenuModel(String nameMenu, int idDrawable, int tipeMenu, boolean isExpand) {
-        this.nameMenu = nameMenu;
-        this.idDrawable = idDrawable;
-        this.tipeMenu = tipeMenu;
+    public MenuModel(String name, int icon, int type, boolean isExpand) {
+        this.name = name;
+        this.icon = icon;
+        this.type = type;
         this.isExpand = isExpand;
     }
 }

@@ -70,27 +70,27 @@ public class MainActivity extends AppCompatActivity implements MenuAdapter.OnMen
         listDataHeader = new ArrayList<>();
         listDataChild = new HashMap<>();
 
-        listDataHeader.add(new MenuModel("Dashboard", R.mipmap.ic_launcher, 1));
+        listDataHeader.add(new MenuModel("Dashboard", R.mipmap.ic_launcher, MenuModel.TYPE_ITEM));
 
         for(int i = 0; i < 4; i++){
-            MenuModel menuModel = new MenuModel("Menu " + (i + 1), R.mipmap.ic_launcher_round, 4);
+            MenuModel menuModel = new MenuModel("Menu " + (i + 1), R.mipmap.ic_launcher_round, MenuModel.TYPE_GROUP);
             listDataHeader.add(menuModel);
             List<MenuModel> subMenuList = new ArrayList<>();
             for(int j = 0; j < 4; j++){
                 MenuModel menuModelChildMenu;
                 if(j == 3){
-                    menuModelChildMenu = new MenuModel("Submenu " + (i + 1), R.drawable.ic_launcher_background, 2);
+                    menuModelChildMenu = new MenuModel("Submenu " + (i + 1), R.drawable.ic_launcher_background, MenuModel.TYPE_ITEM);
                 }else{
-                    menuModelChildMenu = new MenuModel("Submenu " + (i + 1), R.drawable.ic_launcher_background, 1);
+                    menuModelChildMenu = new MenuModel("Submenu " + (i + 1), R.drawable.ic_launcher_background, MenuModel.TYPE_ITEM);
                 }
                 subMenuList.add(menuModelChildMenu);
             }
             listDataChild.put(listDataHeader.get(listDataHeader.size() - 1), subMenuList);
         }
 
-        MenuModel menu5 = new MenuModel("Settings", R.mipmap.ic_launcher, 1);
+        MenuModel menu5 = new MenuModel("Settings", R.mipmap.ic_launcher, MenuModel.TYPE_ITEM);
         listDataHeader.add(menu5);
-        MenuModel menu6 = new MenuModel("Bantuan", R.mipmap.ic_launcher, 1);
+        MenuModel menu6 = new MenuModel("Bantuan", R.mipmap.ic_launcher, MenuModel.TYPE_ITEM);
         listDataHeader.add(menu6);
 
         mMenuAdapter = new MenuAdapter(this, listDataHeader, listDataChild);
