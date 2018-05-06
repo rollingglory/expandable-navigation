@@ -70,12 +70,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View viewItem;
-        if (viewType == TYPE_GROUP_EXPANDED) {
-            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_3, parent, false);
-        } else if (viewType == TYPE_GROUP_COLLAPSED) {
-            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_4, parent, false);
+        if (viewType == TYPE_ITEM) {
+            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_menu, parent, false);
         } else {
-            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_menu_2, parent, false);
+            viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group, parent, false);
         }
         return new ViewHolder(viewItem, viewType);
     }
@@ -84,8 +82,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         int type = holder.getItemViewType();
         MenuModel menuModel = mMenuModelList.get(position);
+        holder.mTextViewMenu.setText(menuModel.name);
         if(type == TYPE_ITEM) {
-            holder.mTextViewMenu.setText(menuModel.name);
             if(menuModel.iconUrl == null || menuModel.iconUrl.isEmpty()){
                 holder.mImageViewMenu.setImageDrawable(mContext.getResources().getDrawable(menuModel.icon));
             }else{
@@ -94,9 +92,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                         .into(viewHolder1.mImageViewMenu);*/
             }
         } else if(type == TYPE_GROUP_COLLAPSED) {
-            holder.mTextViewMenu.setText(menuModel.name);
+            holder.mImageViewArrow.setRotation(0);
         } else if(type == TYPE_GROUP_EXPANDED) {
-            holder.mTextViewMenu.setText(menuModel.name);
+            holder.mImageViewArrow.setRotation(180);
         }
     }
 
@@ -153,6 +151,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
         ImageView mImageViewMenu;
         TextView mTextViewMenu;
+        ImageView mImageViewArrow;
         int viewType;
 
         ViewHolder(View itemView, int viewType) {
@@ -161,6 +160,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             this.viewType = viewType;
             mImageViewMenu = itemView.findViewById(R.id.image_menu);
             mTextViewMenu = itemView.findViewById(R.id.tv_menu);
+            mImageViewArrow = itemView.findViewById(R.id.iv_arrow);
             itemView.setOnClickListener(this);
         }
 
