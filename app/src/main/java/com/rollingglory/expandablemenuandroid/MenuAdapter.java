@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,130 +18,65 @@ import java.util.List;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
-    private static final int TYPE_ITEM = 0;
-    private static final int TYPE_GROUP_EXPANDED = 1;
-    private static final int TYPE_GROUP_COLLAPSED = 2;
-
     private Context mContext;
-    private HashMap<MenuModel, List<MenuModel>> mListDataChild;
-    private List<MenuModel> mMenuModelList;
-    private List<MenuModel> mMenuParentList;
+    private List<MenuModel> mList;
     private OnMenuListener mListener;
 
     public interface OnMenuListener{
-        void onMenuClick(String menu);
+        void onMenuClick(MenuModel menu);
     }
 
-    MenuAdapter(Context context, List<MenuModel> listDataHeader, HashMap<MenuModel, List<MenuModel>> listDataChild) {
+    MenuAdapter(Context context, List<MenuModel> list) {
         mContext = context;
-        mListDataChild = listDataChild;
-        mMenuModelList = new ArrayList<>();
-        mMenuParentList = new ArrayList<>();
-        mMenuModelList.addAll(listDataHeader);
-        mMenuParentList.addAll(listDataHeader);
-    }
-
-    void setMenuModelList(List<MenuModel> menuModelList) {
-        mMenuModelList = menuModelList;
-        mMenuParentList = menuModelList;
-    }
-
-    void setListDataChild(HashMap<MenuModel, List<MenuModel>> listDataChild) {
-        mListDataChild = listDataChild;
+        mList = list;
     }
 
     @Override
     public int getItemViewType(int position) {
-        MenuModel menuModel = mMenuModelList.get(position);
-        if (menuModel.type == MenuModel.TYPE_ITEM) {
-            return TYPE_ITEM;
-        } else {
-            if (menuModel.isExpand) {
-                return TYPE_GROUP_EXPANDED;
-            } else {
-                return TYPE_GROUP_COLLAPSED;
-            }
-        }
+        return mList.get(position).type;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View viewItem;
-        if (viewType == TYPE_ITEM) {
+        if (viewType == MenuModel.TYPE_ITEM) {
             viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_menu, parent, false);
         } else {
             viewItem = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group, parent, false);
         }
-        return new ViewHolder(viewItem, viewType);
+        return new ViewHolder(viewItem);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        MenuModel item = mList.get(position);
         int type = holder.getItemViewType();
-        MenuModel menuModel = mMenuModelList.get(position);
-        holder.mTextViewMenu.setText(menuModel.name);
-        if(type == TYPE_ITEM) {
-            if(menuModel.iconUrl == null || menuModel.iconUrl.isEmpty()){
-                holder.mImageViewMenu.setImageDrawable(mContext.getResources().getDrawable(menuModel.icon));
+        holder.mTextViewMenu.setText(item.name);
+        if(type == MenuModel.TYPE_ITEM) {
+            if(item.iconUrl == null || item.iconUrl.isEmpty()){
+                holder.mImageViewMenu.setImageDrawable(mContext.getResources().getDrawable(item.icon));
             }else{
                 /*GlideApp.with(mContext)
                         .load(menuModel.mIconUrl)
                         .into(viewHolder1.mImageViewMenu);*/
             }
-        } else if(type == TYPE_GROUP_COLLAPSED) {
-            holder.mImageViewArrow.setRotation(0);
-        } else if(type == TYPE_GROUP_EXPANDED) {
-            holder.mImageViewArrow.setRotation(180);
+        } else {
+            if (item.isExpand) {
+                holder.mImageViewArrow.setRotation(180);
+            } else {
+                holder.mImageViewArrow.setRotation(0);
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return mMenuModelList.size();
+        return mList.size();
     }
 
     public void setListener(OnMenuListener listener) {
         mListener = listener;
-    }
-
-    public void expandList(int position){
-        MenuModel menuModel = mMenuModelList.get(position);
-        List<MenuModel> childMenu = mListDataChild.get(menuModel);
-        if(childMenu != null){
-            int i = 1;
-            for(MenuModel menuModel1: childMenu){
-                mMenuModelList.add(position + i, menuModel1);
-                i += 1;
-            }
-        }
-        menuModel.type = TYPE_GROUP_EXPANDED;
-        menuModel.isExpand = true;
-        notifyDataSetChanged();
-    }
-
-    public void collapseList(int position){
-        MenuModel menuModel = mMenuModelList.get(position);
-        List<MenuModel> childMenu = mListDataChild.get(menuModel);
-        if(childMenu != null){
-            int totalChild = childMenu.size();
-            for(int i = 1; i <= totalChild; i++){
-                mMenuModelList.remove(position + 1);
-            }
-        }
-        menuModel.type = TYPE_GROUP_COLLAPSED;
-        menuModel.isExpand = false;
-        notifyDataSetChanged();
-    }
-
-    public int getSizeChildMenu(String menu){
-        for(MenuModel menuModel: mMenuParentList){
-            if(menuModel.name.equals(menu)){
-                List<MenuModel> menuModels = mListDataChild.get(menuModel);
-                return menuModels.size();
-            }
-        }
-        return 0;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder
@@ -152,12 +85,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         ImageView mImageViewMenu;
         TextView mTextViewMenu;
         ImageView mImageViewArrow;
-        int viewType;
 
-        ViewHolder(View itemView, int viewType) {
+        ViewHolder(View itemView) {
             super(itemView);
 
-            this.viewType = viewType;
             mImageViewMenu = itemView.findViewById(R.id.image_menu);
             mTextViewMenu = itemView.findViewById(R.id.tv_menu);
             mImageViewArrow = itemView.findViewById(R.id.iv_arrow);
@@ -166,15 +97,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
         @Override
         public void onClick(View view) {
-            if (viewType == TYPE_GROUP_COLLAPSED) {
-                expandList(getAdapterPosition());
-            } else if (viewType == TYPE_GROUP_EXPANDED) {
-                collapseList(getAdapterPosition());
-            } else {
-                if (mListener != null) {
-                    String menu = mMenuModelList.get(getAdapterPosition()).name;
-                    mListener.onMenuClick(menu);
-                }
+            if (mListener != null) {
+                mListener.onMenuClick(mList.get(getAdapterPosition()));
             }
         }
     }

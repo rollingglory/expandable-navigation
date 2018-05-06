@@ -9,6 +9,7 @@ public class MenuModel {
     public static final int TYPE_ITEM = 0;
     public static final int TYPE_GROUP = 1;
 
+    public int id;
     public String name;
     public String iconUrl;
     public int icon;
@@ -17,24 +18,28 @@ public class MenuModel {
 
     public MenuModel() { }
 
-    public MenuModel(String name, int icon) {
+    public MenuModel(int id, String name, int icon) {
+        this.id = id;
         this.name = name;
         this.icon = icon;
     }
 
-    public MenuModel(String name, int icon, int type) {
+    public MenuModel(int id, String name, int icon, int type) {
+        this.id = id;
         this.name = name;
         this.icon = icon;
         this.type = type;
     }
 
-    public MenuModel(String name, String iconUrl, int type) {
+    public MenuModel(int id, String name, String iconUrl, int type) {
+        this.id = id;
         this.name = name;
         this.iconUrl = iconUrl;
         this.type = type;
     }
 
-    public MenuModel(String name, int icon, int type, boolean isExpand) {
+    public MenuModel(int id, String name, int icon, int type, boolean isExpand) {
+        this.id = id;
         this.name = name;
         this.icon = icon;
         this.type = type;
