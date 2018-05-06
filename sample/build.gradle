@@ -27,5 +27,5 @@ android {
 
 dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation project(':expandablenavigation')
+    implementation 'com.github.rollingglory:expandable-navigation:v0.3.1'
 }
